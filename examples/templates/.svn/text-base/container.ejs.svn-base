@@ -1,0 +1,4 @@
+<h2>This is from the containing template</h2>
+<div class='template'>
+	<%= this.partial({url: 'templates/partial.ejs'}) %>
+</div>

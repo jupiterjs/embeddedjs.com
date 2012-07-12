@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>EJS NOT Caching</title>
+		<script type='text/javascript' src='../javascripts/ejs/ejs.js'></script>
+		<style type='text/css'>
+			.template {border: dashed 1px green;}
+		</style>
+		
+	</head>
+	<body>
+		<h1>EJS NOT caching</h1>
+		<p>Here I tell EJS not to cache templates by calling: EJS.config({cache: false});</p>
+		<p>Check the source code to see how this works.  If you are using FireBug you can see
+		two requests for the template 'templates/content.ejs'.</p>
+		<div id='content1' class='template'></div>
+		<div id='content2' class='template'></div>
+		<a href='caching.html'>To caching</a>
+		<script type='text/javascript'>
+			EJS.config({cache: false});
+			new EJS({url: 'templates/content.ejs'}).update('content1', {});
+			new EJS({url: 'templates/content.ejs'}).update('content2', {});
+		</script>
+	</body>
+</html>

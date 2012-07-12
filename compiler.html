@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>EJS - JavaScript Templates</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+	<div id='header'>
+		<div class='width article'>
+			<ul>
+				<li><a href='index.html'>Home</a></li>
+				<li><a href='http://embeddedjavascript.googlecode.com/files/ejs_production.js'>Download</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/'>GoogleCode</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+				<li><a href='http://groups.google.com/group/embeddedjavascript'>Forum</a></li>
+				<li><a href='contact.html'>Contact</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id='title' class='grey_banner'>
+		<div class='width' style='width: 600px;'>
+			<div id='title_section' style='width: 300px;'>
+				<span class='left_magic'>&lt;%=</span>
+				<label>
+				
+					 &nbsp;&nbsp;&nbsp;&nbsp;Compiler
+
+					<span class='right_magic'>%&gt;</span>
+					&nbsp;&nbsp;
+				</label>
+			</div>
+			
+			
+			<h1>EJS</h1>
+			<h2>&lt;% Embedded JavaScript %&gt;</h2>
+		</div>
+	</div>
+	<div class='width article'>
+		input<br/>
+		<textarea id='input' cols='60' rows='6'></textarea>
+		
+		<br/>
+		output<br/>
+		<textarea id='output' cols='60' rows='6'></textarea>
+		<a href='#' onclick="compile();">Compile</a>
+	</div>
+		<script src="javascripts/ejs_production.js" type="text/javascript"></script>
+	<script src="javascripts/ejs_debugger.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		compile = function(){
+			
+			var result = new EJS({text: document.getElementById('input').value })
+			document.getElementById('output').value = result.out()
+		}
+	</script>
+</body>
+</html>

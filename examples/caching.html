@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>EJS caching template</title>
+		<script type='text/javascript' src='../javascripts/ejs/ejs.js'></script>
+		<style type='text/css'>
+			.template {border: dashed 1px green;}
+		</style>
+	</head>
+	<body>
+		<h1>EJS caching</h1>
+		<p>Here we demonstrate EJS caching its templates.</p>
+		<p>If you check firebug, you can see there is only 1 request for the template.</p>
+		<div id='content1' class='template'></div>
+		<div id='content2' class='template'></div>
+		<a href='caching2.html'>See EJS NOT Caching</a>
+		<script type='text/javascript'>
+			new EJS({url: 'templates/content.ejs'}).update('content1', {});
+			new EJS({url: 'templates/content.ejs'}).update('content2', {});
+		</script>
+	</body>
+</html>

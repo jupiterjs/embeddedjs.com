@@ -1,0 +1,6 @@
+<% for(var abb in teams) { 
+		var team = teams[abb] %>
+		<a href='#' onclick='loadTeam("<%= abb %>")'>
+			<img src='http://www.nba.com/media/<%= abb %>_50px_full.gif' style='left: <%= team.x %>px; top: <%= team.y %>px'  />
+		</a>
+<% } %>

@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<title>EJS partials example</title>
+		<script type='text/javascript' src='../javascripts/ejs/ejs.js'></script>
+		<style type='text/css'>
+			.template {border: dashed 1px green;}
+		</style>
+	</head>
+	<body>
+		<h1>EJS partials</h1>
+		<p>Here we demonstrate EJS's partials.</p>
+		<div id='content1' class='template'></div>
+		<script type='text/javascript'>
+			new EJS({url: 'templates/container.ejs'}).update('content1', {poo :'on you'});
+		</script>
+	</body>
+</html>

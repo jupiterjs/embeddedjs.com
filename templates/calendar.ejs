@@ -1,0 +1,29 @@
+
+
+<% var columns = split_into_columns(feed.getEntries(), 4) %>
+
+<%= img_tag('http://www.nba.com/media/'+_loadedTeam+'_50px_full.gif', teams[_loadedTeam].name) %>
+
+<h6><%= teams[_loadedTeam].name %></h6>
+
+<div id='events_container'>
+
+<% for (var c = 0; c < columns.length; c++) { %>
+	<div>
+		<% for(var r=0; r < columns[c].length; r ++ ){ %>
+		
+			<%  var entry = columns[c][r];
+		 		var start_date = entry.getTimes()[0].getStartTime().getDate(); %>
+		 	
+			<p class="<%= start_date > new Date() ? 'future' : '' %>">
+			
+				<label><%= start_date.toShortDateString() %></label>
+				
+				<span><%= start_date.toShortTimeString() %></span>
+				
+				<%= link_to_entry(entry) %>
+			</p>
+		<% } %>
+	</div>
+<% } %>
+</div>

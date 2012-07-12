@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>EJS - JavaScript Templates</title>
+	<link rel="stylesheet" type="text/css" href="../stylesheets/style.css">
+</head>
+<body>
+	<div id='header'>
+		<div class='width article'>
+			<ul>
+				<li><a href='index.html'>Home</a></li>
+				<li><a href='http://embeddedjavascript.googlecode.com/files/ejs_production.js'>Download</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/'>GoogleCode</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+				<li><a href='http://groups.google.com/group/embeddedjavascript'>Forum</a></li>
+				<li><a href='contact.html'>Contact</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id='title' class='grey_banner'>
+		<div class='width' style='width: 600px;'>
+			<div id='title_section' style='width: 300px;'>
+				<span class='left_magic'>&lt;%=</span>
+				<label>
+					 Simple 
+					<br/>
+					<span class='right_magic'>%&gt;</span>
+					&nbsp;&nbsp;AJAX with EJS
+				</label>
+			</div>
+			
+			
+			<h1>EJS</h1>
+			<h2>&lt;% Embedded JavaScript %&gt;</h2>
+		</div>
+	</div>
+	<div class='width article'>
+		<h2>Screencast Script</h2>
+		<p>This screencast will show you how to create simple, readable layout code using the Embedded JavaScript (EJS) library.</p>
+
+		<p>Here’s what we’ll cover.  We’ll use an NBA Schedule demo to show off the EJS AJAX functionality, review the template code used to display the games, and go over the advantages of the EJS method over the traditional method of displaying AJAX data.</p>
+		
+		<h3>The Demo</h3>
+		
+		<p>To demonstrate this technique, we built this demo, which pulls the schedules of NBA teams from Google Calendar web services and renders the data returned using EJS templates.  With the Google Calendar API, we make a request to the selected team’s calendar feed URL, which returns the season’s game data.</p>
+		
+		<img style='width:600px;' src='../images/demo.PNG' />
+		
+		<p>When you click an NBA team’s logo, a JavaScript function is called.  Here, we fire off a request to Google Calendar for the team’s games, passing a callback function which will be invoked when the data returns.  The callback has the job of putting together HTML using the data and putting it on the page.</p>
+		
+		<h3>What You’re Doing Now</h3>
+		
+		<p>Traditionally, you’d create a callback function to piece together HTML using string concatenation and then insert it into your page.  This code is messy and complicated and you’d have a hard time visualizing the layout by looking at it.</p>
+		
+		<pre>
+var callback = function(data) {
+	var columns = split_into_columns(data.feed.getEntries(), 4)
+	var html = "&lt;img src='http://www.nba.com/media/"+_loadedTeam+
+		"_50px_full.gif' alt="+teams[_loadedTeam].name+" /&gt;";
+	html += "&lt;h6&gt;"+teams[_loadedTeam].name+"&lt;/h6&gt;";
+	html += "&lt;div id='events_container'&gt;";
+	for (var c = 0; c &lt; columns.length; c++) {
+		html += "&lt;div&gt;";
+		for(var r=0; r &lt; columns[c].length; r ++ ){
+			var entry = columns[c][r];
+			var start_date = entry.getTimes()[0].getStartTime().getDate();
+			html += "&lt;p class='"+
+				(start_date &gt; new Date() ? 'future' : '')+"'&gt;";
+			html += "&lt;label&gt;"+
+				start_date.toShortDateString()+"&lt;/label&gt;";
+			html += "&lt;span&gt;"+
+				start_date.toShortTimeString()+"&lt;/span&gt;";
+			html += "&lt;a href='"+entry.getHtmlLink().getHref()+
+				"'&gt;"+entry.getTitle().getText().substring(4)+"&lt;/a&gt;";
+			html += "&lt;/p&gt;";
+		}
+		html += "&lt;/div&gt;";
+	}
+	html += "&lt;/div&gt;";
+	$('calendar_content').innerHTML = html;
+}
+		</pre>
+		
+		<h3>EJS Style AJAX</h3>
+		
+		<p>EJS simplifies the display of AJAX data.</p>
+		
+		<p>Let’s comment out the old code and do this the EJS way.</p>
+		
+		<pre>var callback = new EJS({url: 'templates/calendar.ejs'}).update('calendar_content');</pre>
+		
+		<p>One line of code creates a callback function that accepts the data returned by the asynchronous request, loads a template called calendar.ejs located in the templates directory, renders the template with the given data, and then updates the element on the page with the id ‘calendar_content’.  This function is then passed to getEventsFeed as its callback.</p>
+		
+		<h3>Template Walkthrough</h3>
+		
+		<p>In a second, we’ll walk through the template line by line.  Just to refresh our memory, this template lays out the games from the Google Calendar request in a four column list like this.</p>
+		
+		<pre>
+&lt;% var columns = split_into_columns(feed.getEntries(), 4) %&gt;
+
+&lt;%= img_tag('http://www.nba.com/media/'+_loadedTeam+'_50px_full.gif',
+	 teams[_loadedTeam].name) %&gt;
+
+&lt;h6&gt;&lt;%= teams[_loadedTeam].name %&gt;&lt;/h6&gt;
+
+&lt;div id='events_container'&gt;
+
+&lt;% for (var c = 0; c &lt; columns.length; c++) { %&gt;
+	&lt;div&gt;
+		&lt;% for(var r=0; r &lt; columns[c].length; r ++ ){ %&gt;
+		
+			&lt;%  var entry = columns[c][r];
+		 	    var start_date = 
+				entry.getTimes()[0].getStartTime().getDate(); %&gt;
+		 	
+			&lt;p class="&lt;%= start_date &gt; new Date() ? 'future' : '' %&gt;"&gt;
+			
+				&lt;label&gt;&lt;%= start_date.toShortDateString() %&gt;&lt;/label&gt;
+				
+				&lt;span&gt;&lt;%= start_date.toShortTimeString() %&gt;&lt;/span&gt;
+				
+				&lt;%= link_to_entry(entry) %&gt;
+			&lt;/p&gt;
+		&lt;% } %&gt;
+	&lt;/div&gt;
+&lt;% } %&gt;
+&lt;/div&gt;
+		</pre>
+		
+		<p>We’ll first put the events in a 2D array indexed by row and column for easy access in our loops.  Code between these angle percent magic tags is JavaScript that runs.</p>
+			
+		<p>Then we’ll load the image for the particular team that was clicked.  This line uses the image tag helper built into EJS, which is a shortcut for creating an image tag.  It accepts a source and an alternate text parameter.</p>
+		
+		<p>Now here we’ll create a header for the team’s name.  Code between these angle percent equal sign tags returns HTML that is inserted into the result.</p>
+		
+		<p>Now we’ll create a containing div for the games.</p>
+		
+		<p>We need a for loop to go through the columns.  This loops through the first dimension of two dimensional array we created above.</p>
+		
+		<p>Then we need a nested for loop to go through all the rows.  Here we iterate through the second dimension of the two dimensional array</p>
+		
+		<p>We’ll grab the specific event and its start date using the Google Calendar API.  We save them into the variables entry and start_date.</p>
+		
+		<p>Then we’ll set up a paragraph element and give it a class of future if the game hasn’t occurred yet.  Our stylesheet gives that class special highlighting.</p>
+		
+		<p>Now we’ll create a label element to contain the date.</p>
+		 
+		<p>Next we’ll create a span element for the game’s start time.</p>
+		
+		<p>Finally, we want to create a link to the actual event in Google Calendar with its title.  We’ll create a helper function back in our javascript file.  To put the function in scope of the template, we make it a class function of EJSView, which contains helpers to use in your templates.  It accepts entry as a parameter.  We first want the title of the entry.  The Google API methods getTitle and getText supply the title.  We want to return a link tag with the correct href.  link_to is a method built into EJS which accepts a title and href and returns link tag HTML.  Back in the template, we invoke our new function.</p>
+		
+		<p>Now we’ll just close our open tags and save.</p>
+		
+		<h3>Comparison</h3>
+		
+		<p>Let’s compare the EJS code with the traditional method’s code.  As the title of this screencast suggests, the EJS code is simpler.  But what does that mean specifically?</p>
+		
+		<p>Well, first of all, there is no messy HTML string addition.  Both churn out the exact same HTML into the page.  The difference is the EJS template code retains an HTML-like structure.  There are line breaks and indentations so you can see the HTML.  This achieves a much clearer way to format data.  As a result, your job becomes easier when its necessary to debug or change the layout.</p>
+		
+		<p>Perhaps equally important, the EJS code is simpler because everything is in its right place.  One line of JavaScript links the template, the data, and the page through the glue of EJS.  Rather than being smushed together with the rest of the application code, the layout code is kept in its own separate template file.  Keeping layout code combined with application logic in this sense is like mixing your Caesar salad with your spaghetti main course.  Sure, they all end up in the same place, but that doesn’t mean they were meant to be consumed that way.</p>
+		
+		<p>To summarize, simpler code means readable, logically organized, and maintainable.</p>
+		
+		<h3>Next Steps</h3>
+		
+		<p>Now that we’ve covered a small but important part of the demo, please download the zipped demo code linked on this page and examine the code yourself more thoroughly.</p>
+		
+		<p>Next time you’re building an AJAX feature, keep your code clean and simple with EJS.</p>
+
+	</div>
+	<div class='clear'></div>
+	<br/>
+	<div id='footer'>
+		<div class='width'>
+			<ul>
+				<li><a href='http://embeddedjs.com/'>Home</a></li>
+				<li><a href='http://embeddedjavascript.googlecode.com/files/ejs_production.js'>Download</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/'>GoogleCode</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+				<li><a href='http://groups.google.com/group/embeddedjavascript'>Forum</a></li>
+				<li><a href='contact.html'>Contact</a></li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
+	</script>
+	<script type="text/javascript">
+			var pageTracker = _gat._getTracker("UA-2302003-5");
+			pageTracker._initData();
+			pageTracker._trackPageview();
+	</script>
+	
+</body>
+	
+</html>
