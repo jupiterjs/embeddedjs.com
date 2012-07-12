@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>EJS - JavaScript Templates</title>
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+	<div id='header'>
+		<div class='width article'>
+			<ul>
+				<li><a href='index.html'>Home</a></li>
+				<li><a href='http://embeddedjavascript.googlecode.com/files/ejs_1.0_developer.zip'>Download</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/'>GoogleCode</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+				<li><a href='http://groups.google.com/group/embeddedjavascript'>Forum</a></li>
+				<li><a href='contact.html'>Contact</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id='title' class='grey_banner'>
+		<div class='width' style='width: 600px;'>
+			<div id='title_section' style='width: 300px;'>
+				<span class='left_magic'>&lt;%=</span>
+				<label>
+				
+					 &nbsp;&nbsp;&nbsp;&nbsp;Getting Started 
+					<br/>
+					<span class='right_magic'>%&gt;</span>
+					&nbsp;&nbsp;with EJS
+				</label>
+			</div>
+			
+			
+			<h1>EJS</h1>
+			<h2>&lt;% Embedded JavaScript %&gt;</h2>
+		</div>
+	</div>
+	<div class='width article'>
+		<h2>Getting Started with EJS</h2>
+		<p>Are you ever faced with a mess of HTML string concatenations like this?</p>
+<pre><span class='key'>var</span> html = <span class='string'>"&lt;h1&gt;"</span>+data.title+<span class='string'>"&lt;/h1&gt;"</span>
+html += <span class='string'>"&lt;ul&gt;"</span>
+for(<span class='key'>var</span> i=0; i&lt;data.supplies.length; i++) {
+    html += <span class='string'>"&lt;li&gt;&lt;a href='supplies/"</span>+data.supplies[i]+<span class='string'>"'&gt;"</span>
+    html += data.supplies[i]+<span class='string'>"&lt;/a>&lt;/li&gt;"</span>
+}
+html += <span class='string'>"&lt;/ul&gt;"</span></pre>
+		
+		<p>If you're a web developer, the answer is probably yes.  
+		Beyond being ugly, the structure of your HTML is lost in the JavaScript.  
+		Adding to this layout would be difficult.  How can we clean it up?</p>
+		
+		<p>In this tutorial, we'll show you how to improve the above code that produces a list of supply links.  We'll use 
+		Embedded JavaScript (EJS) to return this code to a straightforward, maintainable HTML structure.</p>
+		
+		<p>EJS is a JavaScript templating library.  It is commonly used for building html strings from JSON data. 
+		Typically, EJS works like this:</p>
+		
+		
+		<img src='images/diagram.png' style='border: solid 1px #bfbfbf; margin: 0px 0px 20px 40px;'/>
+		<p>This tutorial walks you through:</p>
+		<ol class='navigation'>
+			<li><a href="#include">Including EJS</a></li>
+			<li><a href="#create_template">Creating a template</a></li>
+			<li><a href="#view_helpers">Using view helpers</a></li>
+			<li><a href="#error_handling">Using error handling</a></li>
+			<li><a href="#when_to_use_ejs">When to use EJS</a></li>
+		</ol>
+		
+		<h3 id='include'>Include EJS</h3>
+		<p>Before we put on the rubber gloves and get to the heavy scrubbing, lets get set up a bit. </p>
+		
+		<p>Your page needs to include EJS so your JavaScript can use it.  
+		Start by downloading <a href='http://embeddedjavascript.googlecode.com/files/ejs_0.9_alpha_1_production.js'>ejs_production.js</a> from 
+		<a href='http://code.google.com/p/embeddedjavascript/'>Google Code</a> or the 
+		<a href='http://embeddedjavascript.googlecode.com/svn/'>subversion repository</a>. </p>
+		
+		<p>Next add EJS to your HTML like this:</p>
+		
+		<pre>&lt;script type=<span class='string'>"text/javascript"</span> src=<span class='string'>"ejs_production.js"</span>&gt;&lt;/script&gt;</pre>
+		
+		
+		<h3 id="create_template">Create a Template</h3>
+		
+		<p>The first step towards cleaner code is separating your presentation 
+		markup (HTML) from your application logic (JavaScript).  
+		We'll do this by separating our presentation markup into a separate file called a template.  
+		Create a file called cleaning.ejs and insert the following code:</p>
+		
+<pre>&lt;h1><span class='magic'>&lt;%= title %&gt;</span>&lt;/h1&gt;
+&lt;ul&gt;
+    <span class='magic'>&lt;% for(<span class='key'>var</span> i=0; i&lt;supplies.length; i++) { %&gt;</span>
+        &lt;li&gt;
+            &lt;a href='supplies/<span class='magic'>&lt;%= supplies[i] %&gt;'</span>&gt;
+                <span class='magic'>&lt;%= supplies[i] %&gt;</span>
+            &lt;/a&gt;
+        &lt;/li&gt;
+    <span class='magic'>&lt;% } %&gt;</span>
+&lt;/ul&gt;</pre>
+
+		<p>You'll notice everything inside <span class='magic'>&lt;% %></span> tags is 
+		executed and everything inside <span class='magic'>&lt;%= %></span> tags inserts itself into the returned HTML string.</p>
+		<p>
+		We need to add JavaScript to control the loading and rendering of the template.  
+		We'll replace the original string concatenation code with the following:
+		</p>
+<pre><span class='comment'>// load the template file, then render it with data</span>
+<span class='key'>var</span> html = <span class='key'>new</span> EJS({<span class='attribute'>url:</span> <span class='string'>'cleaning.ejs'</span>}).render(data);</pre>
+		<p>Doesn't that feel better? The template code restores HTML to its intended structure and the JavaScript code is short and unambiguous.  
+		The dust is clear, now its time to mop.</p>
+		
+		<h3 id='view_helpers'>View Helpers</h3>
+		<p>EJS is packaged with view helpers.  
+		View helpers are shortcuts to commonly used display code, like links and forms.  
+		Similar to those found in the Ruby on Rails framework, they keep view code as short, 
+		simple, and to the point as possible.</p>
+		
+		<p>The links in our template are being constructed using something resembling string concatenation.</p>
+		
+<pre>&lt;li&gt;
+    &lt;a href='supplies/<span class='magic'>&lt;%= supplies[i] %&gt;'</span>&gt;
+        <span class='magic'>&lt;%= supplies[i] %&gt;</span>
+    &lt;/a&gt;
+&lt;/li&gt;</pre>
+
+		<p>This code is still quite messy.  There are enough nested tags to make you lightheaded.  
+		Let's tidy that up using a view helper.</p>
+		
+<pre>&lt;li>
+    <span class='magic'>&lt;%= link_to(supplies[i], <span class='string'>'supplies/'</span>+supplies[i]) %></span>
+&lt;/li></pre>
+
+
+		<p>This code is much cleaner and more straightforward.  
+		Remember what building the links used to look like?</p>
+		
+<pre>html += <span class='string'>"&lt;li&gt;&lt;a href='supplies/"</span>+data.supplies[i]+<span class='string'>"'&gt;"</span>
+html += data.supplies[i]+<span class='string'>"&lt;/a>&lt;/li&gt;"</span></pre>
+
+		<p>Compared to the original JavaScript, 
+		someone with little knowledge of your code would have a <i>much</i> easier time 
+		understanding the EJS template snippet.</p>
+		
+		<p>Now you can relax and enjoy the tingly clean sensation.</p>
+		
+		<h3 id='error_handling'>Error Handling</h3>
+		
+		<p>A good maid always admits her mistakes. 
+		If you have an error in an EJS template, EJS will point out the exact line number the error occurred on. 
+		All you have to do is include ejs_jslint.js, which you can download at <a href='http://code.google.com/p/embeddedjavascript/'>Google Code</a>.  
+		If you're using Firebug, the Firefox JavaScript debugger plugin, the error will appear right in your console.</p>
+		
+		<p>Example broken template code:</p>
+		
+<pre>&lt;ul>
+	<span class='magic'>&lt;% <span class="error">foor</span>(<span class='key'>var</span> i=0; i&lt;supplies.length; i++) { %></span>
+	&lt;li>
+	    <span class='magic'>&lt;%= link_to(supplies[i], <span class='string'>'supplies/'</span>+supplies[i]) %></span>
+	&lt;/li>
+	<span class='magic'>&lt;% } %></span>
+&lt;/ul></pre>
+		<p>Firebug console:</p>
+		<img src='images/firebug.png' style='border: solid 1px #bfbfbf; margin: 0px 0px 20px 40px;'/>
+		
+		<h3 id='when_to_use_ejs'>When is it a good time to clean?</h3>
+		
+		<p>Some would say cleaning should be a daily habit, 
+		but we feel EJS is a perfect assistant if you find yourself in one of these binds:</p>
+		
+		<ol>
+			<li>Building HTML strings with JavaScript.  </li>
+			<p>As we discussed in this tutorial, the downside of HTML string concatenation in JavaScript is maintainability.  
+			When you’re adding together HTML in JavaScript strings, its difficult to see the big picture of what you’re creating - 
+			 a representation of the layout for your page.  
+			Using templates makes layout easier because you can see the HTML and preserve linebreaks and spacing.</p>
+			<li>AJAX web development with web services.</li>
+			<p>EJS accepts JSON coming in asynchronously from a web service, passes this data into a template of your choosing, 
+			and inserts the resulting HTML into the page for you.  
+			All you have to do is write one line of code:</p>
+<pre><span class='key'>new</span> EJS({<span class='attribute'>url:</span> <span class='string'>'comments.ejs'</span>}).update(<span class='string'>'element_id'</span>, <span class='string'>'/comments.json'</span>)</pre>
+<p>Pretty sweet, eh?</p>
+			
+			<li>Application skinning.</li>
+			<p>If you want to give users the power to customize their own look and feel, EJS provides the perfect mechanism.  
+			EJS templates execute in the browser only, so there is no security risk to your server.  
+			Allowing users to upload EJS templates and associated stylesheets is the easiest and fastest way to skin your site.</p>
+		</ol>
+		
+		
+		
+		<h3>More tips</h3>
+		<p>Wax on, wax off. You've learned some good techniques, 
+		but cleaning up your messy HTML isn't simple enough to teach in one tutorial. 
+		For more info, check out these resources.</p>
+		
+		<ul>
+			<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+			<li><a href='http://groups.google.com/group/embeddedjavascript'>EJS Google Group</a></li>
+			<li><a href='http://code.google.com/p/embeddedjavascript/'>EJS Google Code Page</a></li>
+			<li><a href='http://embeddedjavascript.googlecode.com/svn/'>SVN Repository</a></li>
+		</ul>
+	</div>
+	<div class='clear'></div>
+	<br/>
+	<div id='footer'>
+		<div class='width'>
+			<ul>
+				<li><a href='http://embeddedjs.com/'>Home</a></li>
+				<li><a href='http://embeddedjavascript.googlecode.com/files/ejs_1.0_developer.zip'>Download</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/'>GoogleCode</a></li>
+				<li><a href='http://code.google.com/p/embeddedjavascript/w/list'>Documentation</a></li>
+				<li><a href='http://groups.google.com/group/embeddedjavascript'>Forum</a></li>
+				<li><a href='contact.html'>Contact</a></li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
+	</script>
+	<script type="text/javascript">
+			var pageTracker = _gat._getTracker("UA-2302003-5");
+			pageTracker._initData();
+			pageTracker._trackPageview();
+	</script>
+	
+</body>
+	
+</html>
